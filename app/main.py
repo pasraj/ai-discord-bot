@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from app.schema import Query
+from app.api_key_auth import get_api_key
 from app.gpt import GPT
 from config import get_settings
 import discord
@@ -46,6 +47,5 @@ async def startup_event():
     asyncio.create_task(run_discord_bot())
 
 @app.post("/query")
-async def get_the_answer(query: Query):
+async def get_the_answer(query: Query, api_key: str = Depends(get_api_key)):
     return {"response": GPT.get_answer(query.query, query.thread_id)}
-
